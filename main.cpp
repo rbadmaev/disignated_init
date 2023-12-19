@@ -1,9 +1,9 @@
 #include <boost/operators.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <optional>
 #include <set>
-#include <algorithm>
 #include <vector>
 
 
@@ -13,8 +13,6 @@ using DimensionId = unsigned;
 // Optional type
 template <class T>
 using Optional = std::optional<T>;
-
-static constexpr auto& None = std::nullopt;
 
 template <typename ValueType>
 std::ostream& operator<<(std::ostream& stream, const Optional<ValueType>& opt)
@@ -27,17 +25,16 @@ std::ostream& operator<<(std::ostream& stream, const Optional<ValueType>& opt)
     return stream;
 }
 
+
 //======================================================================================================================
 class CellRangeTracingCompilerSettings : public boost::equality_comparable<CellRangeTracingCompilerSettings> {
 public:
     CellRangeTracingCompilerSettings(unsigned a, unsigned b)
         : _tracedCubeIds{a, b}
     {
+        std::cout << "Call constructor for " << this << std::endl;
     }
 
-    bool isCubeTraced(unsigned cubeId) const;
-    unsigned mainTracedCubeId() const;
-    bool operator==(const CellRangeTracingCompilerSettings& other) const;
     auto size() const
     {
         return _tracedCubeIds.size();
@@ -48,29 +45,12 @@ private:
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CellRangeTracingCompilerSettings::isCubeTraced(unsigned cubeId) const
-{
-    return std::find(_tracedCubeIds.begin(), _tracedCubeIds.end(), cubeId) != _tracedCubeIds.end();
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-unsigned CellRangeTracingCompilerSettings::mainTracedCubeId() const
-{
-    return _tracedCubeIds.front();
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CellRangeTracingCompilerSettings::operator==(const CellRangeTracingCompilerSettings& other) const
-{
-    return _tracedCubeIds == other._tracedCubeIds;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
 std::ostream& operator<<(std::ostream& stream, const CellRangeTracingCompilerSettings& l)
 {
     stream << &l << "{size=" << l.size() << "}";
     return stream;
 }
+
 
 //======================================================================================================================
 struct CompilerSettings : public boost::equality_comparable<CompilerSettings> {
